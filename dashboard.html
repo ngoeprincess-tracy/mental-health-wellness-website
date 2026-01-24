@@ -1,0 +1,213 @@
+// ...existing code...
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mental Health Dashboard</title>
+  <style>
+    :root{
+      --bg:#f6f8fb; --card:#ffffff; --accent:#5b9bd5; --muted:#6b7280;
+    }
+    body{font-family:Inter,Segoe UI,Roboto,system-ui,Arial; margin:0; background:var(--bg); color:#111;}
+    .container{max-width:900px;margin:32px auto;padding:20px;}
+    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+    h1{font-size:1.25rem;margin:0;}
+    .date{color:var(--muted); font-size:0.95rem;}
+    .card{background:var(--card);border-radius:12px;padding:20px;box-shadow:0 6px 18px rgba(13,38,76,0.06);margin-bottom:16px;}
+    .mood-row{display:flex;align-items:center;gap:18px;}
+    .mood-display{font-size:48px;width:120px;height:120px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#fff,#f4f7fb);flex-direction:column}
+    .mood-label{font-weight:600;margin-top:6px}
+    .actions{display:flex;gap:12px;flex-wrap:wrap;}
+    .btn{background:var(--accent);color:#fff;padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:600}
+    .btn.secondary{background:#eef4fb;color:var(--accent);border:1px solid #dbe9fb}
+    .btn.ghost{background:transparent;color:var(--accent);border:1px dashed #cfe3fa}
+    .mood-options{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+    .mood-option{padding:8px 10px;border-radius:10px;background:#fff;border:1px solid #eee;cursor:pointer;display:flex;align-items:center;gap:8px}
+    footer{margin-top:18px;color:var(--muted);font-size:0.9rem;text-align:center}
+    /* modal */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(6,12,26,0.5);display:none;align-items:center;justify-content:center}
+    .modal{background:#fff;padding:18px;border-radius:12px;max-width:460px;width:92%}
+    .modal h2{margin:0 0 8px 0}
+    .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    @media (max-width:520px){ .mood-row{flex-direction:column;align-items:start} .mood-display{width:100%;height:auto;padding:18px;flex-direction:row;justify-content:flex-start} }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>Mental Health Dashboard</h1>
+        <div class="date" id="todayDate"></div>
+      </div>
+      <div class="actions" role="navigation" aria-label="Quick actions">
+        <button class="btn" id="btnCheckMood">Check Mood</button>
+        <button class="btn secondary" id="btnChat">Chat</button>
+        <button class="btn secondary" id="btnExercises">Exercises</button>
+        <button class="btn ghost" id="btnArticles">Read Articles</button>
+      </div>
+    </header>
+
+    <section class="card" aria-labelledby="mood-heading">
+      <h2 id="mood-heading" style="margin-top:0">Today's mood</h2>
+      <div class="mood-row">
+        <div class="mood-display" id="moodDisplay" aria-live="polite" title="Today's saved mood">
+          <div id="moodEmoji" style="font-size:44px">🙂</div>
+          <div class="mood-label" id="moodText">Feeling fine</div>
+        </div>
+        <div style="flex:1">
+          <p style="margin:0 0 8px 0; color:var(--muted)">
+            Track how you're feeling today. Use "Check Mood" to pick or update your mood. Saved locally on this device.
+          </p>
+
+          <div style="margin-top:6px">
+            <strong>Quick mood options:</strong>
+            <div class="mood-options" id="quickOptions" aria-hidden="false">
+              <button data-emoji="😄" data-text="Very happy" class="mood-option" aria-label="Very happy">😄 Very happy</button>
+              <button data-emoji="🙂" data-text="Feeling fine" class="mood-option" aria-label="Feeling fine">🙂 Fine</button>
+              <button data-emoji="😟" data-text="A bit down" class="mood-option" aria-label="A bit down">😟 Down</button>
+              <button data-emoji="😰" data-text="Anxious" class="mood-option" aria-label="Anxious">😰 Anxious</button>
+              <button data-emoji="😴" data-text="Tired" class="mood-option" aria-label="Tired">😴 Tired</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" aria-label="Resources">
+      <h3 style="margin-top:0">Resources</h3>
+      <p style="color:var(--muted);margin:6px 0 12px 0">Try short exercises, read articles, or chat if you need immediate support.</p>
+      <div class="actions">
+        <button class="btn secondary" id="btnDoExercise">Start a breathing exercise</button>
+        <button class="btn secondary" id="btnReadArticle">Browse articles</button>
+        <button class="btn" id="btnStartChat">Open chat</button>
+      </div>
+    </section>
+
+    <footer>
+      Saved locally. No account required. <span id="savedMsg"></span>
+    </footer>
+  </div>
+
+  <!-- Modal: Mood picker -->
+  <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal" role="document">
+      <h2>How are you feeling right now?</h2>
+      <div class="row" id="modalOptions">
+        <button data-emoji="😄" data-text="Very happy" class="mood-option">😄 Very happy</button>
+        <button data-emoji="🙂" data-text="Feeling fine" class="mood-option">🙂 Fine</button>
+        <button data-emoji="😟" data-text="A bit down" class="mood-option">😟 Down</button>
+        <button data-emoji="😰" data-text="Anxious" class="mood-option">😰 Anxious</button>
+        <button data-emoji="😴" data-text="Tired" class="mood-option">😴 Tired</button>
+        <button data-emoji="😵" data-text="Overwhelmed" class="mood-option">😵 Overwhelmed</button>
+      </div>
+      <div style="margin-top:12px;text-align:right">
+        <button class="btn secondary" id="closeModal">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Utils
+    const todayKey = (() => {
+      const d = new Date();
+      return 'mood_' + d.toISOString().slice(0,10); // key per day
+    })();
+
+    const formatDate = (d) => d.toLocaleDateString(undefined, {weekday:'long', month:'short', day:'numeric'});
+
+    // DOM
+    const todayDate = document.getElementById('todayDate');
+    const moodEmoji = document.getElementById('moodEmoji');
+    const moodText = document.getElementById('moodText');
+    const savedMsg = document.getElementById('savedMsg');
+    const backdrop = document.getElementById('modalBackdrop');
+
+    todayDate.textContent = formatDate(new Date());
+
+    function loadMood() {
+      try {
+        const raw = localStorage.getItem(todayKey);
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        setMoodDisplay(data.emoji, data.text, false);
+        savedMsg.textContent = `Last saved: ${new Date(data.ts).toLocaleTimeString()}`;
+      } catch(e) { console.warn('loadMood error', e); }
+    }
+
+    function saveMood(emoji, text) {
+      const data = { emoji, text, ts: Date.now() };
+      try {
+        localStorage.setItem(todayKey, JSON.stringify(data));
+        savedMsg.textContent = `Last saved: ${new Date(data.ts).toLocaleTimeString()}`;
+      } catch(e) {
+        console.warn('saveMood error', e);
+      }
+    }
+
+    function setMoodDisplay(emoji, text, persist=true) {
+      moodEmoji.textContent = emoji;
+      moodText.textContent = text;
+      if (persist) saveMood(emoji, text);
+    }
+
+    // Quick options handlers
+    document.querySelectorAll('.mood-option').forEach(btn => {
+      btn.addEventListener('click', (ev) => {
+        const b = ev.currentTarget;
+        const emoji = b.dataset.emoji;
+        const text = b.dataset.text;
+        setMoodDisplay(emoji, text, true);
+        closeModal();
+      });
+    });
+
+    // Buttons
+    document.getElementById('btnCheckMood').addEventListener('click', openModal);
+    document.getElementById('closeModal').addEventListener('click', closeModal);
+    document.getElementById('btnChat').addEventListener('click', () => { window.location.href = 'chat.html'; });
+    document.getElementById('btnStartChat').addEventListener('click', () => { window.location.href = 'chat.html'; });
+    document.getElementById('btnExercises').addEventListener('click', () => { window.location.href = 'exercises.html'; });
+    document.getElementById('btnDoExercise').addEventListener('click', startBreathingExercise);
+    document.getElementById('btnArticles').addEventListener('click', () => { window.location.href = 'articles.html'; });
+    document.getElementById('btnReadArticle').addEventListener('click', () => { window.location.href = 'articles.html'; });
+
+    function openModal(){
+      backdrop.style.display = 'flex';
+      backdrop.setAttribute('aria-hidden','false');
+    }
+    function closeModal(){
+      backdrop.style.display = 'none';
+      backdrop.setAttribute('aria-hidden','true');
+    }
+
+    // Simple breathing exercise demo
+    function startBreathingExercise(){
+      const duration = 20; // seconds demo
+      let seconds = duration;
+      const prevText = moodText.textContent;
+      const prevEmoji = moodEmoji.textContent;
+      const interval = setInterval(() => {
+        if (seconds <= 0){
+          clearInterval(interval);
+          setMoodDisplay(prevEmoji, prevText, false);
+          alert('Exercise finished. Hope you feel a little better.');
+          return;
+        }
+        moodEmoji.textContent = '🌬️';
+        moodText.textContent = 'Breathing... ' + seconds + 's';
+        seconds--;
+      }, 1000);
+    }
+
+    // Initialize
+    loadMood();
+
+    // keyboard: Esc closes modal
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+  </script>
+</body>
+</html>
+// ...existing code...
