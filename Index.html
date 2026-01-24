@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Mental Health Wellness — Home</title>
+  <title>MINDWELL — Home</title>
   <style>
-    :root{--bg:#f6f8fb;--card:#fff;--accent:#5b9bd5;--muted:#6b7280}
+    :root{--bg:#f3fff7;--card:#fff;--accent:#2f9e44;--accent-600:#227a35;--muted:#3f6b56}
     body{font-family:Inter,Segoe UI,Roboto,Arial;margin:0;background:var(--bg);color:#0b2136}
     .wrap{max-width:960px;margin:36px auto;padding:20px}
     header{display:flex;justify-content:space-between;align-items:center;gap:12px}
@@ -23,12 +23,12 @@
     /* Crisis support footer */
     .crisis-footer{
       position:fixed;left:16px;right:16px;bottom:16px;
-      background:linear-gradient(90deg,#fff6f6,#fff);
-      border:1px solid #ffd6d6;color:#5b1b1b;padding:12px 14px;border-radius:10px;
-      box-shadow:0 6px 18px rgba(200,80,80,0.08);display:flex;gap:12px;align-items:center;z-index:9999;font-size:0.95rem;
+      background:linear-gradient(90deg,#f0fff4,#e6fff0);
+      border:1px solid #b7f3c7;color:var(--accent-600);padding:12px 14px;border-radius:10px;
+      box-shadow:0 6px 18px rgba(15,80,40,0.06);display:flex;gap:12px;align-items:center;z-index:9999;font-size:0.95rem;
     }
-    .crisis-footer a{ color:#7a1b1b; font-weight:600; text-decoration:underline; }
-    .crisis-close{ margin-left:auto; background:transparent; border:0; font-size:18px; line-height:1; cursor:pointer; color:#7a1b1b; }
+    .crisis-footer a{ color:var(--accent-600); font-weight:600; text-decoration:underline; }
+    .crisis-close{ margin-left:auto; background:transparent; border:0; font-size:18px; line-height:1; cursor:pointer; color:var(--accent-600); }
     @media (max-width:520px){ .crisis-footer{left:10px;right:10px;bottom:10px;font-size:0.9rem} }
   </style>
 </head>
@@ -36,7 +36,7 @@
   <div class="wrap">
     <header>
       <div>
-        <h1>Mental Health Wellness</h1>
+        <h1>MINDWELL</h1>
         <div class="lead">Small tools and supportive resources to help you through the day.</div>
       </div>
       <nav aria-label="Primary">
@@ -44,6 +44,8 @@
         <a class="ghost" href="chat.html">Chat</a>
         <a class="ghost" href="exercises.html">Exercises</a>
         <a class="ghost" href="articles.html">Articles</a>
+        <a class="ghost" href="community.html">Community</a>
+        <a class="ghost" href="contact.html">Contact</a>
       </nav>
     </header>
 
@@ -71,6 +73,12 @@
           <h3 id="artTitle">Articles & Tips</h3>
           <p>Short, practical articles about mood, sleep, stress, and reaching out for help.</p>
           <div class="actions"><a class="btn" href="articles.html">Read</a></div>
+        </section>
+
+        <section class="card" role="listitem" aria-labelledby="contactTitle">
+          <h3 id="contactTitle">Contact</h3>
+          <p>Send feedback, request support, or save a local message. We will not send email server-side in this demo.</p>
+          <div class="actions"><a class="btn" href="contact.html">Contact</a></div>
         </section>
       </div>
     </main>

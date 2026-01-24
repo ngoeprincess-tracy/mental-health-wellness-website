@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Community — MINDWELL</title>
+  <style>
+    :root{--bg:#f3fff7;--card:#fff;--accent:#2f9e44;--accent-600:#227a35;--muted:#3f6b56;--glass:rgba(34,122,53,0.06)}
+    body{font-family:Inter,Segoe UI,Roboto,Arial;margin:0;background:linear-gradient(180deg,var(--bg),#f8fff9 60%);color:#0b2136}
+    .wrap{max-width:940px;margin:28px auto;padding:18px}
+    header{display:flex;justify-content:space-between;align-items:center;padding:8px 0}
+    .brand{display:flex;flex-direction:column;background:linear-gradient(90deg,rgba(47,158,68,0.08),rgba(34,122,53,0.03));padding:8px 12px;border-radius:8px}
+    nav a{color:var(--muted);text-decoration:none;margin-left:12px;font-weight:600}
+    nav a.active{color:var(--accent-600)}
+    main{margin-top:18px;display:grid;grid-template-columns:1fr;gap:14px}
+    .card{background:var(--card);border-radius:12px;padding:16px;box-shadow:0 8px 30px var(--glass);border:1px solid rgba(34,122,53,0.06)}
+    h1,h2,h3{margin:0 0 8px 0}
+    p,li{color:#224b35}
+    ul{margin:8px 0 0 18px;padding:0}
+    .muted{color:var(--muted)}
+    footer.site{margin-top:18px;color:var(--muted);font-size:0.9rem;text-align:center}
+
+    /* community board */
+    .board-form{display:flex;flex-direction:column;gap:8px}
+    .board-form input[type="text"], .board-form textarea{
+      padding:10px;border-radius:10px;border:1px solid rgba(34,122,53,0.12);background:linear-gradient(180deg,#fff,#fbfff9);
+      resize:vertical;font-size:0.95rem;
+    }
+    .board-controls{display:flex;gap:8px;align-items:center}
+    .btn{padding:8px 12px;border-radius:10px;border:0;background:var(--accent);color:#fff;cursor:pointer}
+    .btn.ghost{background:transparent;border:1px solid rgba(34,122,53,0.12);color:var(--accent)}
+    .posts{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+    .post{padding:12px;border-radius:10px;border:1px solid rgba(34,122,53,0.06);background:#fff;box-shadow:0 6px 18px rgba(34,122,53,0.03)}
+    .post .meta{display:flex;gap:8px;align-items:center;font-size:0.9rem;color:var(--muted);margin-bottom:8px}
+    .post .text{color:#163e29;white-space:pre-wrap}
+    .post .actions{display:flex;gap:8px;margin-top:8px}
+    .flagged{border-color:#ffd2d2;background:#fff7f7}
+    .cw{font-weight:600;color:#774;display:inline-block;padding:4px 8px;border-radius:8px;background:#fff3f0;border:1px solid #f7d7d7}
+    @media (max-width:820px){ .wrap{padding:12px} }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand" aria-hidden="false">
+        <a href="index.html" style="text-decoration:none;color:inherit"><strong>MINDWELL</strong></a>
+        <div class="muted" style="font-size:0.9rem">Community Safe Space</div>
+      </div>
+
+      <nav aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="chat.html">Chat</a>
+        <a href="exercises.html">Exercises</a>
+        <a href="articles.html">Articles</a>
+        <a href="community.html" class="active">Community</a>
+        <a href="contact.html">Contact</a>
+        <a href="about.html">About</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="card" aria-labelledby="introTitle">
+        <h1 id="introTitle">Community — Safe Space</h1>
+        <p class="muted">Welcome to the MINDWELL community: a supportive, respectful, and judgment-free place to share, connect, and find encouragement.</p>
+      </section>
+
+      <section class="card" aria-labelledby="boardTitle">
+        <h2 id="boardTitle">Share & read experiences</h2>
+        <p class="muted">Post thoughts, coping strategies, or encouragement. Posts are public within this browser (stored in your device). Do not share personal identifying information you wouldn't want to be public.</p>
+
+        <form id="boardForm" class="board-form" autocomplete="off" onsubmit="return false;">
+          <label class="small">Name (optional)</label>
+          <input id="posterName" type="text" placeholder="Your name or nickname (or leave blank for Anonymous)" maxlength="60" />
+
+          <label class="small">Message</label>
+          <textarea id="posterText" rows="4" placeholder="Share an experience, how you're coping, or words of encouragement..." maxlength="2000"></textarea>
+
+          <div class="board-controls">
+            <button id="btnPost" class="btn">Post</button>
+            <button id="btnClearForm" class="btn ghost" type="button">Clear</button>
+            <div style="margin-left:auto" class="muted">Please be kind and avoid giving medical advice.</div>
+          </div>
+        </form>
+
+        <div id="posts" class="posts" aria-live="polite"></div>
+
+        <div style="margin-top:12px" class="muted">Tip: Use the contact page to send private feedback to the site maintainers.</div>
+      </section>
+
+      <section class="card" aria-labelledby="safetyTitle">
+        <h2 id="safetyTitle">Important Safety Notice</h2>
+        <p>This community is peer-support oriented and not a replacement for professional mental health care. If you are in crisis or need urgent help, contact local emergency services immediately. In Cameroon dial <strong>119</strong>.</p>
+      </section>
+    </main>
+
+    <footer class="site">
+      © 2026 MINDWELL — You are not alone.
+    </footer>
+  </div>
+
+  <!-- Crisis support footer -->
+  <div class="crisis-footer" role="contentinfo" aria-live="polite">
+    <div>
+      If you are in immediate danger or thinking about harming yourself, call local emergency services now. In Cameroon dial <strong>119</strong>.
+    </div>
+    <button id="crisisClose" class="crisis-close" aria-label="Dismiss crisis support">✕</button>
+  </div>
+
+  <script>
+    // Simple community board (client-only, stored in localStorage)
+    const KEY = 'mh_community_posts_v1';
+    const boardForm = document.getElementById('boardForm');
+    const posterName = document.getElementById('posterName');
+    const posterText = document.getElementById('posterText');
+    const postsEl = document.getElementById('posts');
+    const btnPost = document.getElementById('btnPost');
+    const btnClearForm = document.getElementById('btnClearForm');
+
+    function escapeHtml(s){
+      return String(s)
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'",'&#39;');
+    }
+
+    function loadPosts(){
+      try { return JSON.parse(localStorage.getItem(KEY) || '[]'); }
+      catch(e){ return []; }
+    }
+    function savePosts(arr){ localStorage.setItem(KEY, JSON.stringify(arr)); }
+
+    function hasCrisisKeyword(text){
+      const t = (text||'').toLowerCase();
+      const keywords = ['suicide','kill myself','die','want to die','self-harm','hurt myself','end my life'];
+      return keywords.some(k => t.includes(k));
+    }
+
+    function renderPosts(){
+      const arr = loadPosts();
+      postsEl.innerHTML = '';
+      if (!arr.length) { postsEl.innerHTML = '<div class="muted">No posts yet — be the first to share.</div>'; return; }
+      arr.forEach((p, idx) => {
+        const div = document.createElement('div');
+        div.className = 'post' + (p.flagged ? ' flagged' : '');
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        const who = document.createElement('strong');
+        who.textContent = p.name ? p.name : 'Anonymous';
+        const time = document.createElement('span');
+        time.textContent = ' • ' + new Date(p.ts).toLocaleString();
+        meta.appendChild(who);
+        meta.appendChild(time);
+        if (p.cw) {
+          const cw = document.createElement('span');
+          cw.className = 'cw';
+          cw.textContent = 'Content warning';
+          meta.appendChild(cw);
+        }
+        const text = document.createElement('div');
+        text.className = 'text';
+        text.innerHTML = escapeHtml(p.text);
+        const actions = document.createElement('div');
+        actions.className = 'actions';
+        const btnFlag = document.createElement('button');
+        btnFlag.className = 'btn ghost';
+        btnFlag.textContent = p.flagged ? 'Unflag' : 'Flag';
+        btnFlag.addEventListener('click', () => {
+          toggleFlag(idx);
+        });
+        // allow local delete of own message via confirm (no auth here)
+        const btnDelete = document.createElement('button');
+        btnDelete.className = 'btn ghost';
+        btnDelete.textContent = 'Delete';
+        btnDelete.addEventListener('click', () => {
+          if (!confirm('Delete this post from this browser?')) return;
+          deletePost(idx);
+        });
+        actions.appendChild(btnFlag);
+        actions.appendChild(btnDelete);
+
+        div.appendChild(meta);
+        div.appendChild(text);
+        div.appendChild(actions);
+        postsEl.appendChild(div);
+      });
+      postsEl.scrollIntoView({behavior:'smooth', block:'end'});
+    }
+
+    function addPost(name, text){
+      const trimmed = (text || '').trim();
+      if (!trimmed) return { ok:false, msg:'Message cannot be empty.' };
+      const posts = loadPosts();
+      const newPost = {
+        name: name ? name.trim().substring(0,60) : '',
+        text: trimmed.substring(0,2000),
+        ts: Date.now(),
+        flagged: false,
+        cw: hasCrisisKeyword(trimmed)
+      };
+      posts.unshift(newPost);
+      savePosts(posts.slice(0,500)); // keep latest 500
+      renderPosts();
+      return { ok:true };
+    }
+
+    function toggleFlag(i){
+      const posts = loadPosts();
+      if (!posts[i]) return;
+      posts[i].flagged = !posts[i].flagged;
+      savePosts(posts);
+      renderPosts();
+    }
+    function deletePost(i){
+      const posts = loadPosts();
+      posts.splice(i,1);
+      savePosts(posts);
+      renderPosts();
+    }
+
+    btnPost.addEventListener('click', () => {
+      const res = addPost(posterName.value, posterText.value);
+      if (!res.ok) { alert(res.msg); return; }
+      posterText.value = '';
+      posterName.value = '';
+    });
+    btnClearForm.addEventListener('click', () => { posterName.value=''; posterText.value=''; });
+
+    // initial render
+    renderPosts();
+
+    // show crisis footer behavior (existing pattern)
+    (function(){
+      const KEY2 = 'mh_crisis_hidden_until';
+      const el = document.querySelector('.crisis-footer');
+      if (!el) return;
+      const close = document.getElementById('crisisClose');
+      const hiddenUntil = Number(localStorage.getItem(KEY2) || 0);
+      if (hiddenUntil > Date.now()) el.style.display = 'none';
+      close.addEventListener('click', () => {
+        el.style.display = 'none';
+        localStorage.setItem(KEY2, String(Date.now() + 24*60*60*1000));
+      });
+    })();
+  </script>
+</body>
+</html>
