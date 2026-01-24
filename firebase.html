@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Firebase helper</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+</head>
+<body>
+  <div style="max-width:980px;margin:18px auto;padding:14px">
+    <header style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div><a href="index.html" style="text-decoration:none;color:inherit"><strong>Mental Health Wellness</strong></a></div>
+      <nav aria-label="Primary">
+        <a class="ghost" href="dashboard.html">Dashboard</a>
+        <a class="ghost" href="chat.html">Chat</a>
+        <a class="ghost" href="exercises.html">Exercises</a>
+        <a class="ghost" href="articles.html">Articles</a>
+      </nav>
+    </header>
+  </div>
+
+  <!-- This file exposes a minimal Firebase helper on window.firebaseApi
+       Replace the config values below with your Firebase project config
+       and call firebaseApi.init() before using save/load functions. -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <script src="motiv.js" defer></script>
+  <script>
+    // Replace with your Firebase config (found in Firebase console)
+    const DEFAULT_CONFIG = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      // optional:
+      // storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      // messagingSenderId: "SENDER_ID",
+      // appId: "APP_ID"
+    };
+
+    // Helper: date key YYYY-MM-DD
+    const dateKey = (d = new Date()) => d.toISOString().slice(0,10);
+
+    // Expose a simple API
+    window.firebaseApi = {
+      initialized: false,
+
+      // init(config) - initialize Firebase and sign in anonymously
+      async init(config = DEFAULT_CONFIG) {
+        if (this.initialized) return;
+        if (!config || !config.projectId || !config.apiKey) {
+          throw new Error('Provide a valid Firebase config object.');
+        }
+        firebase.initializeApp(config);
+        this.auth = firebase.auth();
+        this.db = firebase.firestore();
+        // sign in anonymously so we can store per-user documents
+        try {
+          const res = await this.auth.signInAnonymously();
+          this.uid = res.user.uid;
+        } catch (err) {
+          // if already signed in, currentUser will be set
+          if (this.auth.currentUser) this.uid = this.auth.currentUser.uid;
+          else throw err;
+        }
+        this.initialized = true;
+      },
+
+      // saveMood(emoji, text) - saves today's mood under collection 'moods', doc id = uid_YYYY-MM-DD
+      async saveMood(emoji, text) {
+        if (!this.initialized) throw new Error('firebaseApi.init() must be called first');
+        const uid = this.uid || (this.auth.currentUser && this.auth.currentUser.uid);
+        if (!uid) throw new Error('No authenticated user');
+        const day = dateKey();
+        const docId = `${uid}_${day}`;
+        const ref = this.db.collection('moods').doc(docId);
+        const payload = {
+          uid,
+          day,
+          emoji: emoji || null,
+          text: text || '',
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        await ref.set(payload, { merge: true });
+        return payload;
+      },
+
+      // loadMood() - loads today's mood for the signed-in user, returns document data or null
+      async loadMood() {
+        if (!this.initialized) throw new Error('firebaseApi.init() must be called first');
+        const uid = this.uid || (this.auth.currentUser && this.auth.currentUser.uid);
+        if (!uid) throw new Error('No authenticated user');
+        const day = dateKey();
+        const docId = `${uid}_${day}`;
+        const snap = await this.db.collection('moods').doc(docId).get();
+        if (!snap.exists) return null;
+        const data = snap.data();
+        // convert Firestore timestamp to ms if present
+        if (data.updatedAt && data.updatedAt.toDate) data.updatedAt = data.updatedAt.toDate();
+        return data;
+      },
+
+      // optional: sign out
+      async signOut() {
+        if this.auth) await this.auth.signOut();
+        this.initialized = false;
+        this.uid = null;
+      }
+    };
+
+    // Example (uncomment to auto-init on page load; recommended: init from your dashboard code)
+    // (async () => { await window.firebaseApi.init(); console.log('Firebase ready'); })();
+  </script>
+
+  <!-- Crisis support footer -->
+  <div class="crisis-footer" role="contentinfo" aria-live="polite"></div>
+  <script>
+    (function(){
+      const KEY = 'mh_crisis_hidden_until';
+      const el = document.querySelector('.crisis-footer');
+      if (!el) return;
+      const close = document.createElement('button');
+      close.className = 'crisis-close';
+      close.textContent = '✕';
+      close.addEventListener('click', () => {
+        el.style.display = 'none';
+        localStorage.setItem(KEY, String(Date.now() + 24*60*60*1000));
+      });
+      el.appendChild(document.createElement('div')).innerHTML = 'If you are in immediate danger or thinking about harming yourself, call local emergency services now. In Cameroon dial <strong>119</strong>.';
+      el.appendChild(close);
+      const hiddenUntil = Number(localStorage.getItem(KEY) || 0);
+      if (hiddenUntil > Date.now()) el.style.display = 'none';
+    })();
+  </script>
+</body>
+</html>

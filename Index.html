@@ -1,34 +1,114 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>MindWell  | Mental Health Wellness</title>
-        <link rel="stylesheet" href="style.css">
-    </head>
-    <body>
-        <header>
-            <h1>MindWell</h1>
-            <p>your Mental health matters.</p>
-        </header>
-        <section class="about">
-            <h2>about MindWell</h2>
-            <p>
-                MindWell is a mental health Wellness website created to promote emotional well-being, stress management, and self care routines
-                it also links you to health personnels around our area
-            </p>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mental Health Wellness — Home</title>
+  <style>
+    :root{--bg:#f6f8fb;--card:#fff;--accent:#5b9bd5;--muted:#6b7280}
+    body{font-family:Inter,Segoe UI,Roboto,Arial;margin:0;background:var(--bg);color:#0b2136}
+    .wrap{max-width:960px;margin:36px auto;padding:20px}
+    header{display:flex;justify-content:space-between;align-items:center;gap:12px}
+    h1{font-size:1.25rem;margin:0}
+    p.lead{color:var(--muted);margin:8px 0 18px 0}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+    .card{background:var(--card);padding:16px;border-radius:12px;box-shadow:0 6px 18px rgba(13,38,76,0.06);display:flex;flex-direction:column;gap:10px;min-height:120px}
+    .card h3{margin:0;font-size:1rem}
+    .card p{margin:0;color:var(--muted);font-size:0.95rem}
+    .actions{display:flex;gap:8px;margin-top:auto}
+    a.btn{display:inline-block;padding:8px 12px;border-radius:10px;text-decoration:none;color:#fff;background:var(--accent);font-weight:600}
+    a.ghost{background:transparent;color:var(--accent);border:1px solid #dbe9fb;padding:8px 12px;border-radius:10px;text-decoration:none}
+    footer{margin-top:20px;color:var(--muted);font-size:0.9rem;text-align:center}
+
+    /* Crisis support footer */
+    .crisis-footer{
+      position:fixed;left:16px;right:16px;bottom:16px;
+      background:linear-gradient(90deg,#fff6f6,#fff);
+      border:1px solid #ffd6d6;color:#5b1b1b;padding:12px 14px;border-radius:10px;
+      box-shadow:0 6px 18px rgba(200,80,80,0.08);display:flex;gap:12px;align-items:center;z-index:9999;font-size:0.95rem;
+    }
+    .crisis-footer a{ color:#7a1b1b; font-weight:600; text-decoration:underline; }
+    .crisis-close{ margin-left:auto; background:transparent; border:0; font-size:18px; line-height:1; cursor:pointer; color:#7a1b1b; }
+    @media (max-width:520px){ .crisis-footer{left:10px;right:10px;bottom:10px;font-size:0.9rem} }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Mental Health Wellness</h1>
+        <div class="lead">Small tools and supportive resources to help you through the day.</div>
+      </div>
+      <nav aria-label="Primary">
+        <a class="ghost" href="dashboard.html">Dashboard</a>
+        <a class="ghost" href="chat.html">Chat</a>
+        <a class="ghost" href="exercises.html">Exercises</a>
+        <a class="ghost" href="articles.html">Articles</a>
+      </nav>
+    </header>
+
+    <main style="margin-top:18px">
+      <div class="grid" role="list">
+        <section class="card" role="listitem" aria-labelledby="dashTitle">
+          <h3 id="dashTitle">Today's Mood</h3>
+          <p>Quickly log how you're feeling and view your daily mood.</p>
+          <div class="actions"><a class="btn" href="dashboard.html">Open</a></div>
         </section>
-        <section class="resources">
-            <h2>Wellness Tips</h2>
-            <ul>
-                <li>Practice deep breathing</li>
-                ,<li>Maintain a healthy sleep schedule</li>
-                <li>Talk to someone you trust</li>
-                <li> Take breaks and practice self-care</li>
-                <li> Do activities you like</li>
-            </ul>
+
+        <section class="card" role="listitem" aria-labelledby="chatTitle">
+          <h3 id="chatTitle">Support Chat</h3>
+          <p>Talk with a supportive helper (automated). Includes crisis detection.</p>
+          <div class="actions"><a class="btn" href="chat.html">Chat</a></div>
         </section>
-        <footer>
-            <p>2025 MindWell</p>
-        </footer>
-    </body>
+
+        <section class="card" role="listitem" aria-labelledby="exTitle">
+          <h3 id="exTitle">Guided Exercises</h3>
+          <p>Breathing, grounding, and relaxation exercises with optional voice prompts.</p>
+          <div class="actions"><a class="btn" href="exercises.html">Exercises</a></div>
+        </section>
+
+        <section class="card" role="listitem" aria-labelledby="artTitle">
+          <h3 id="artTitle">Articles & Tips</h3>
+          <p>Short, practical articles about mood, sleep, stress, and reaching out for help.</p>
+          <div class="actions"><a class="btn" href="articles.html">Read</a></div>
+        </section>
+      </div>
+    </main>
+
+    <footer>
+      Built for wellbeing. Not a replacement for professional care.
+    </footer>
+  </div>
+
+  <!-- Crisis support footer -->
+  <div class="crisis-footer" role="contentinfo" aria-live="polite">
+    <div>
+      If you are in immediate danger or thinking about harming yourself, call local emergency services now.
+      In Cameroon dial <strong>119</strong>.
+    </div>
+    <button id="crisisClose" class="crisis-close" aria-label="Dismiss crisis support">✕</button>
+  </div>
+
+  <script src="motiv.js" defer></script>
+  <script>
+    (function(){
+      const KEY = 'mh_crisis_hidden_until';
+      const el = document.querySelector('.crisis-footer');
+      const close = document.getElementById('crisisClose');
+      const hiddenUntil = Number(localStorage.getItem(KEY) || 0);
+      if (hiddenUntil > Date.now()) el.style.display = 'none';
+      close.addEventListener('click', () => {
+        el.style.display = 'none';
+        localStorage.setItem(KEY, String(Date.now() + 24*60*60*1000));
+      });
+    })();
+    // optional: show a motivational toast on load if not snoozed
+    (function(){
+      try {
+        const snooze = Number(localStorage.getItem('mh_motiv_snooze') || 0);
+        if (Date.now() > snooze && window.motiv) window.motiv.show();
+      } catch(e){}
+    })();
+  </script>
+</body>
 </html>

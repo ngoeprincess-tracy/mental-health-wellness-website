@@ -1,0 +1,92 @@
+// ...new file...
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>About — Mental Health Wellness</title>
+  <style>
+    :root{--bg:#f6f8fb;--card:#fff;--accent:#5b9bd5;--muted:#6b7280}
+    body{font-family:Inter,Segoe UI,Roboto,Arial;margin:0;background:var(--bg);color:#0b2136}
+    .wrap{max-width:920px;margin:28px auto;padding:20px}
+    header{display:flex;justify-content:space-between;align-items:center;gap:12px}
+    h1{font-size:1.25rem;margin:0}
+    .lead{color:var(--muted);margin-top:6px}
+    .card{background:var(--card);padding:16px;border-radius:12px;box-shadow:0 6px 18px rgba(13,38,76,0.06);margin-top:14px}
+    .muted{color:var(--muted)}
+    a.btn{display:inline-block;padding:8px 12px;border-radius:10px;text-decoration:none;color:#fff;background:var(--accent)}
+    footer{margin-top:18px;color:var(--muted);font-size:0.9rem;text-align:center}
+
+    /* Crisis support footer */
+    .crisis-footer{position:fixed;left:16px;right:16px;bottom:16px;background:linear-gradient(90deg,#fff6f6,#fff);border:1px solid #ffd6d6;color:#5b1b1b;padding:12px 14px;border-radius:10px;box-shadow:0 6px 18px rgba(200,80,80,0.08);display:flex;gap:12px;align-items:center;z-index:9999;font-size:0.95rem}
+    .crisis-footer a{ color:#7a1b1b; font-weight:600; text-decoration:underline; }
+    .crisis-close{ margin-left:auto; background:transparent; border:0; font-size:18px; line-height:1; cursor:pointer; color:#7a1b1b; }
+    @media (max-width:520px){ .crisis-footer{left:10px;right:10px;bottom:10px;font-size:0.9rem} }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <a href="index.html" style="text-decoration:none;color:inherit"><strong>Mental Health Wellness</strong></a>
+        <div class="lead">About our mission and team</div>
+      </div>
+      <nav aria-label="Primary">
+        <a class="muted" href="dashboard.html">Dashboard</a> |
+        <a class="muted" href="chat.html">Chat</a> |
+        <a class="muted" href="exercises.html">Exercises</a> |
+        <a class="muted" href="articles.html">Articles</a>
+      </nav>
+    </header>
+
+    <section class="card" aria-labelledby="mission">
+      <h1 id="mission">Our mission</h1>
+      <p class="muted">We provide simple, accessible tools and supportive information to help people manage everyday stress and mood. This site is informational and not a substitute for professional care.</p>
+    </section>
+
+    <section class="card" aria-labelledby="team">
+      <h2 id="team">Team</h2>
+      <p class="muted">A small, volunteer-led project combining practical exercises, supportive automated chat, and curated articles to encourage wellbeing. Contributors: project maintainer, designers and content reviewers.</p>
+    </section>
+
+    <section class="card" aria-labelledby="contact">
+      <h2 id="contact">Contact</h2>
+      <p class="muted">For feedback or corrections, email: <a href="mailto:hello@example.com">hello@example.com</a>.</p>
+      <p class="muted">If you want to contribute, open a pull request on the repository.</p>
+    </section>
+
+    <section class="card" aria-labelledby="privacy">
+      <h2 id="privacy">Privacy & safety</h2>
+      <p class="muted">This site stores minimal data locally in your browser. Chat responder and exercises run locally. We do not collect personal data unless you configure external services (e.g. Firebase).</p>
+    </section>
+
+    <footer>
+      Built for wellbeing. Not a replacement for professional care.
+    </footer>
+  </div>
+
+  <!-- Crisis support footer -->
+  <div class="crisis-footer" role="contentinfo" aria-live="polite">
+    <div>
+      If you are in immediate danger or thinking about harming yourself, call local emergency services now. In Cameroon dial <strong>119</strong>.
+    </div>
+    <button id="crisisClose" class="crisis-close" aria-label="Dismiss crisis support">✕</button>
+  </div>
+
+  <script src="motiv.js" defer></script>
+  <script>
+    (function(){
+      const KEY = 'mh_crisis_hidden_until';
+      const el = document.querySelector('.crisis-footer');
+      const close = document.getElementById('crisisClose');
+      const hiddenUntil = Number(localStorage.getItem(KEY) || 0);
+      if (hiddenUntil > Date.now()) el.style.display = 'none';
+      close.addEventListener('click', () => {
+        el.style.display = 'none';
+        localStorage.setItem(KEY, String(Date.now() + 24*60*60*1000));
+      });
+    })();
+  </script>
+</body>
+</html>
+// ...new file...
