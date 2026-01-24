@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Articles — Mental Health</title>
+  <style>
+    :root{--bg:#f6f8fb;--card:#fff;--accent:#5b9bd5;--muted:#6b7280}
+    body{font-family:Inter,Segoe UI,Roboto,Arial;margin:0;background:var(--bg);color:#111}
+    .container{max-width:900px;margin:32px auto;padding:18px}
+    header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+    h1{font-size:1.15rem;margin:0}
+    .controls{display:flex;gap:8px;align-items:center}
+    input[type="search"]{padding:8px 10px;border-radius:10px;border:1px solid #e6eefc;min-width:220px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:12px}
+    .card{background:var(--card);border-radius:12px;padding:14px;box-shadow:0 6px 18px rgba(13,38,76,0.06);border:1px solid #f0f6ff}
+    .title{font-weight:700;margin-bottom:6px}
+    .meta{color:var(--muted);font-size:0.9rem;margin-bottom:10px}
+    .excerpt{color:#243b5b;margin-bottom:10px}
+    button{padding:8px 10px;border-radius:10px;border:0;background:var(--accent);color:#fff;cursor:pointer}
+    button.ghost{background:transparent;color:var(--accent);border:1px solid #dbe9fb}
+    .tags{display:flex;gap:6px;flex-wrap:wrap}
+    .tag{background:#eef6ff;color:var(--accent);padding:4px 8px;border-radius:999px;font-size:0.8rem}
+    .fav{background:transparent;border:0;color:#ff6b6b;font-size:1.05rem;cursor:pointer}
+    .empty{color:var(--muted);text-align:center;padding:28px}
+    /* modal */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(6,12,26,0.5);display:none;align-items:center;justify-content:center;padding:20px}
+    .modal{background:#fff;padding:18px;border-radius:12px;max-width:760px;width:100%;max-height:90vh;overflow:auto}
+    .modal h2{margin-top:0}
+    footer{margin-top:18px;color:var(--muted);font-size:0.9rem;text-align:center}
+    /* Crisis support footer */
+    .crisis-footer{
+      position:fixed;
+      left:16px; right:16px; bottom:16px;
+      background:linear-gradient(90deg,#fff6f6,#fff);
+      border:1px solid #ffd6d6;
+      color:#5b1b1b;
+      padding:12px 14px;
+      border-radius:10px;
+      box-shadow:0 6px 18px rgba(200,80,80,0.08);
+      display:flex;
+      gap:12px;
+      align-items:center;
+      z-index:9999;
+      font-size:0.95rem;
+    }
+    .crisis-footer a{ color:#7a1b1b; font-weight:600; text-decoration:underline; }
+    .crisis-close{ margin-left:auto; background:transparent; border:0; font-size:18px; line-height:1; cursor:pointer; color:#7a1b1b; }
+    @media (max-width:520px){ .crisis-footer{left:10px;right:10px;bottom:10px;font-size:0.9rem} }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>Articles & Tips</h1>
+        <div class="meta">Short, practical articles about mood, sleep, stress, and wellbeing.</div>
+      </div>
+      <div class="controls" role="search">
+        <input id="search" type="search" placeholder="Search articles..." aria-label="Search articles">
+        <button id="btnFav" class="ghost" title="Show favorites">Favorites</button>
+        <a href="dashboard.html" class="small" style="color:var(--accent);text-decoration:none">← Dashboard</a>
+      </div>
+    </header>
+
+    <main id="list" class="grid" aria-live="polite"></main>
+
+    <div class="empty" id="emptyMsg" style="display:none">No articles found.</div>
+
+    <footer>Articles are for informational purposes only and do not replace professional advice.</footer>
+  </div>
+
+  <!-- Article modal -->
+  <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal" role="document">
+      <h2 id="modTitle"></h2>
+      <div class="meta" id="modMeta"></div>
+      <article id="modBody" style="line-height:1.6;color:#243b5b"></article>
+      <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end">
+        <button id="modFav" class="ghost">☆ Save</button>
+        <button id="modClose" class="ghost">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Crisis support footer -->
+  <div class="crisis-footer" role="contentinfo" aria-live="polite">
+    <div>
+      If you are in immediate danger or thinking about harming yourself, call local emergency services now.
+      In the U.S. dial or text <strong>988</strong>. For other countries see
+      <a href="https://www.opencounseling.com/suicide-hotlines" target="_blank" rel="noopener">international crisis lines</a>.
+    </div>
+    <button id="crisisClose" class="crisis-close" aria-label="Dismiss crisis support">✕</button>
+  </div>
+
+  <script>
+    // sample articles — replace with your content or load from server
+    const ARTICLES = [
+      { id: 'a1', title: '5 Ways to Calm Anxiety Quickly', tags:['anxiety','breathing'], summary:'Simple techniques to lower anxiety fast.', body:`<p>When anxiety spikes try these quick strategies...</p><ol><li>Slow nasal breathing</li><li>Ground with your senses</li><li>Progressive muscle relaxation</li></ol>` , date:'2024-08-12' },
+      { id: 'a2', title: 'Improve Sleep Tonight', tags:['sleep','routine'], summary:'Small bedtime changes that help sleep.', body:`<p>Good sleep routines are crucial. Try limiting screens, keeping a consistent bedtime, and relaxing breathing for 10 minutes before bed.</p>` , date:'2024-05-02' },
+      { id: 'a3', title: 'Managing Work Stress', tags:['stress','work'], summary:'Practical approaches to reduce overwhelm at work.', body:`<p>Break tasks into small steps, set realistic boundaries, and practice micro-breaks during the day.</p>` , date:'2024-03-18' },
+      { id: 'a4', title: 'When to Seek Professional Help', tags:['support','therapy'], summary:'Signs it may be time to talk to a professional.', body:`<p>If symptoms persist, worsen, or interfere with daily life, consider reaching out to a clinician or trusted service.</p>` , date:'2023-11-01' }
+    ];
+
+    const STORAGE_FAV = 'mh_favorites';
+    const listEl = document.getElementById('list');
+    const emptyMsg = document.getElementById('emptyMsg');
+    const search = document.getElementById('search');
+    const btnFav = document.getElementById('btnFav');
+    const modalBackdrop = document.getElementById('modalBackdrop');
+    const modTitle = document.getElementById('modTitle');
+    const modMeta = document.getElementById('modMeta');
+    const modBody = document.getElementById('modBody');
+    const modFav = document.getElementById('modFav');
+    const modClose = document.getElementById('modClose');
+
+    function loadFavs(){ try { return JSON.parse(localStorage.getItem(STORAGE_FAV) || '[]'); } catch(e){ return []; } }
+    function saveFavs(arr){ localStorage.setItem(STORAGE_FAV, JSON.stringify(arr)); }
+
+    function isFav(id){ return loadFavs().includes(id); }
+    function toggleFav(id){
+      const cur = loadFavs();
+      const i = cur.indexOf(id);
+      if (i >= 0) cur.splice(i,1);
+      else cur.push(id);
+      saveFavs(cur);
+      renderList(currentFilter, showOnlyFavs);
+    }
+
+    // render article card
+    function renderCard(a){
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="title">${a.title}</div>
+        <div class="meta">${new Date(a.date).toLocaleDateString()} • <span class="tags">${a.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</span></div>
+        <div class="excerpt">${a.summary}</div>
+        <div style="display:flex;gap:8px;justify-content:space-between;align-items:center">
+          <div>
+            <button class="ghost btnRead" data-id="${a.id}">Read</button>
+          </div>
+          <div>
+            <button class="fav" data-id="${a.id}" title="Save to favorites">${ isFav(a.id) ? '★' : '☆' }</button>
+          </div>
+        </div>
+      `;
+      // wire buttons
+      card.querySelector('.btnRead').addEventListener('click', () => openArticle(a.id));
+      card.querySelector('.fav').addEventListener('click', (e) => { toggleFav(a.id); });
+      return card;
+    }
+
+    let currentFilter = '';
+    let showOnlyFavs = false;
+
+    function renderList(q = '', favOnly = false){
+      currentFilter = q || '';
+      showOnlyFavs = favOnly;
+      listEl.innerHTML = '';
+      const ql = (q||'').trim().toLowerCase();
+      const favs = loadFavs();
+      const out = ARTICLES.filter(a=>{
+        if (favOnly && !favs.includes(a.id)) return false;
+        if (!ql) return true;
+        return (a.title + ' ' + a.summary + ' ' + a.tags.join(' ')).toLowerCase().includes(ql);
+      });
+      if (!out.length){
+        emptyMsg.style.display = '';
+        listEl.style.display = 'none';
+        return;
+      }
+      emptyMsg.style.display = 'none';
+      listEl.style.display = 'grid';
+      out.forEach(a => listEl.appendChild(renderCard(a)));
+    }
+
+    // open article modal
+    function openArticle(id){
+      const a = ARTICLES.find(x=>x.id===id);
+      if (!a) return;
+      modTitle.textContent = a.title;
+      modMeta.textContent = `${new Date(a.date).toLocaleDateString()} • ${a.tags.join(', ')}`;
+      modBody.innerHTML = a.body;
+      modFav.textContent = isFav(a.id) ? '★ Saved' : '☆ Save';
+      modFav.dataset.id = a.id;
+      modalBackdrop.style.display = 'flex';
+      modalBackdrop.setAttribute('aria-hidden','false');
+    }
+
+    function closeModal(){ modalBackdrop.style.display = 'none'; modalBackdrop.setAttribute('aria-hidden','true'); }
+
+    // wire controls
+    search.addEventListener('input', (e) => renderList(e.target.value, showOnlyFavs));
+    btnFav.addEventListener('click', () => { showOnlyFavs = !showOnlyFavs; btnFav.textContent = showOnlyFavs ? 'All' : 'Favorites'; renderList(currentFilter, showOnlyFavs); });
+    modClose.addEventListener('click', closeModal);
+    modFav.addEventListener('click', (e) => { toggleFav(e.currentTarget.dataset.id); modFav.textContent = isFav(e.currentTarget.dataset.id) ? '★ Saved' : '☆ Save'; });
+
+    // close modal on backdrop click or Esc
+    modalBackdrop.addEventListener('click', (e) => { if (e.target === modalBackdrop) closeModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+    // init
+    renderList();
+
+    (function(){
+      const KEY = 'mh_crisis_hidden_until';
+      const el = document.querySelector('.crisis-footer');
+      if (!el) return;
+      const close = document.getElementById('crisisClose');
+      const hiddenUntil = Number(localStorage.getItem(KEY) || 0);
+      if (hiddenUntil > Date.now()) el.style.display = 'none';
+      close.addEventListener('click', () => {
+        el.style.display = 'none';
+        localStorage.setItem(KEY, String(Date.now() + 24*60*60*1000));
+      });
+    })();
+  </script>
+</body>
+</html>

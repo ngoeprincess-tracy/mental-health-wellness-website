@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Guided Exercises</title>
+  <style>
+    :root{--bg:#f6f8fb;--card:#fff;--accent:#5b9bd5;--muted:#6b7280}
+    body{font-family:Inter,Segoe UI,Roboto,Arial;margin:0;background:var(--bg);color:#111}
+    .container{max-width:820px;margin:28px auto;padding:18px}
+    header{display:flex;justify-content:space-between;align-items:center}
+    h1{font-size:1.1rem;margin:0}
+    .grid{display:grid;grid-template-columns:1fr 320px;gap:16px;margin-top:14px}
+    .card{background:var(--card);border-radius:12px;padding:16px;box-shadow:0 6px 18px rgba(13,38,76,0.06)}
+    .exercise {margin-bottom:14px;padding:12px;border-radius:10px;border:1px solid #eef4fb}
+    .title{font-weight:700;margin-bottom:6px}
+    .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    button{padding:8px 12px;border-radius:10px;border:0;background:var(--accent);color:#fff;cursor:pointer}
+    button.ghost{background:transparent;color:var(--accent);border:1px solid #dbe9fb}
+    .muted{color:var(--muted);font-size:0.95rem}
+    .timer{font-size:1.6rem;font-weight:700;color:var(--accent);margin-top:6px}
+    .steps{margin-top:10px;padding-left:14px}
+    .small{font-size:0.9rem;color:var(--muted)}
+    .rightcol{display:flex;flex-direction:column;gap:12px}
+    .log{font-size:0.95rem;color:var(--muted)}
+    @media (max-width:820px){ .grid{grid-template-columns:1fr} .rightcol{order:2} }
+
+    /* Crisis support footer */
+    .crisis-footer{
+      position:fixed;
+      left:16px; right:16px; bottom:16px;
+      background:linear-gradient(90deg,#fff6f6,#fff);
+      border:1px solid #ffd6d6;
+      color:#5b1b1b;
+      padding:12px 14px;
+      border-radius:10px;
+      box-shadow:0 6px 18px rgba(200,80,80,0.08);
+      display:flex;
+      gap:12px;
+      align-items:center;
+      z-index:9999;
+      font-size:0.95rem;
+    }
+    .crisis-footer a{ color:#7a1b1b; font-weight:600; text-decoration:underline; }
+    .crisis-close{ margin-left:auto; background:transparent; border:0; font-size:18px; line-height:1; cursor:pointer; color:#7a1b1b; }
+    @media (max-width:520px){ .crisis-footer{left:10px;right:10px;bottom:10px;font-size:0.9rem} }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>Guided Exercises</h1>
+        <div class="small">Short, evidence-informed practices for grounding, breathing, and relaxation.</div>
+      </div>
+      <div><a href="dashboard.html" class="small" style="color:var(--accent);text-decoration:none">← Back to dashboard</a></div>
+    </header>
+
+    <div class="grid">
+      <main class="card" aria-live="polite">
+        <!-- Breathing -->
+        <section class="exercise" id="breathing">
+          <div class="title">Box Breathing (2-4-4) — 2–3 minutes</div>
+          <div class="muted">A simple paced breathing exercise to reduce stress.</div>
+          <div class="steps" id="breathSteps">
+            <div>Inhale — hold — exhale — hold. Adjust counts if needed.</div>
+          </div>
+
+          <div class="controls" style="align-items:center">
+            <button id="startBreath">Start</button>
+            <button id="pauseBreath" class="ghost" style="display:none">Pause</button>
+            <button id="stopBreath" class="ghost" style="display:none">Stop</button>
+            <label class="small" style="margin-left:auto">
+              <input type="checkbox" id="voiceBreath" /> voice
+            </label>
+          </div>
+
+          <div class="timer" id="breathTimer" aria-live="polite">Ready</div>
+          <div class="muted small">Step: <span id="breathPhase">—</span></div>
+        </section>
+
+        <!-- Grounding -->
+        <section class="exercise" id="grounding">
+          <div class="title">5-4-3-2-1 Grounding</div>
+          <div class="muted">Use your senses to anchor yourself to the present moment.</div>
+          <ol class="steps" id="groundSteps">
+            <li>Look for 5 things you can see</li>
+            <li>Notice 4 things you can touch</li>
+            <li>Listen for 3 things you can hear</li>
+            <li>Identify 2 things you can smell</li>
+            <li>Notice 1 thing you can taste or a calming breath</li>
+          </ol>
+
+          <div class="controls">
+            <button id="startGround">Start</button>
+            <button id="nextGround" class="ghost" style="display:none">Next</button>
+            <button id="stopGround" class="ghost" style="display:none">Stop</button>
+            <label class="small" style="margin-left:auto">
+              <input type="checkbox" id="voiceGround" /> voice
+            </label>
+          </div>
+
+          <div class="timer" id="groundTimer">Ready</div>
+          <div class="muted small">Current step: <span id="groundPhase">—</span></div>
+        </section>
+
+        <!-- Progressive muscle relaxation -->
+        <section class="exercise" id="pmr">
+          <div class="title">Progressive Muscle Relaxation (Short)</div>
+          <div class="muted">Tense and release major muscle groups to release tension.</div>
+          <div class="steps" id="pmrSteps">
+            <div>Follow prompts: tense for 5s, release for 10s. Typical time ~5 minutes.</div>
+          </div>
+
+          <div class="controls">
+            <button id="startPmr">Start</button>
+            <button id="pausePmr" class="ghost" style="display:none">Pause</button>
+            <button id="stopPmr" class="ghost" style="display:none">Stop</button>
+            <label class="small" style="margin-left:auto">
+              <input type="checkbox" id="voicePmr" /> voice
+            </label>
+          </div>
+
+          <div class="timer" id="pmrTimer">Ready</div>
+          <div class="muted small">Phase: <span id="pmrPhase">—</span></div>
+        </section>
+      </main>
+
+      <aside class="rightcol">
+        <div class="card">
+          <div style="font-weight:700">Quick tips</div>
+          <ul class="small muted">
+            <li>Breathe through your nose and out through your mouth.</li>
+            <li>Stop any exercise if it causes dizziness or discomfort.</li>
+            <li>These practices are not a replacement for professional care.</li>
+          </ul>
+        </div>
+
+        <div class="card log">
+          <div style="font-weight:700">Activity log</div>
+          <div id="logList" class="small muted" style="margin-top:8px">No activity yet.</div>
+          <div style="margin-top:8px">
+            <button id="clearLog" class="ghost">Clear log</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Crisis support footer -->
+  <div class="crisis-footer" role="contentinfo" aria-live="polite">
+    <div>
+      If you are in immediate danger or thinking about harming yourself, call local emergency services now.
+      In the U.S. dial or text <strong>988</strong>. For other countries see
+      <a href="https://www.opencounseling.com/suicide-hotlines" target="_blank" rel="noopener">international crisis lines</a>.
+    </div>
+    <button id="crisisClose" class="crisis-close" aria-label="Dismiss crisis support">✕</button>
+  </div>
+
+  <script>
+    // Simple guided exercise engine. Uses localStorage for basic logging.
+    const LOG_KEY = 'mh_ex_log';
+
+    function pushLog(text) {
+      try {
+        const arr = JSON.parse(localStorage.getItem(LOG_KEY) || '[]');
+        arr.unshift({ t: Date.now(), text });
+        localStorage.setItem(LOG_KEY, JSON.stringify(arr.slice(0,50)));
+        renderLog();
+      } catch(e) { console.warn(e); }
+    }
+    function renderLog() {
+      const el = document.getElementById('logList');
+      const arr = JSON.parse(localStorage.getItem(LOG_KEY) || '[]');
+      if (!arr.length) { el.textContent = 'No activity yet.'; return; }
+      el.innerHTML = arr.map(i => `<div style="margin-bottom:6px"><strong>${new Date(i.t).toLocaleTimeString()}</strong> — ${i.text}</div>`).join('');
+    }
+    document.getElementById('clearLog').addEventListener('click', () => {
+      if (!confirm('Clear activity log?')) return;
+      localStorage.removeItem(LOG_KEY);
+      renderLog();
+    });
+    renderLog();
+
+    // small voice helper
+    function speak(text){
+      if (!('speechSynthesis' in window)) return;
+      const u = new SpeechSynthesisUtterance(text);
+      u.rate = 1;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(u);
+    }
+
+    // --- Box breathing ---
+    (function(){
+      const start = document.getElementById('startBreath');
+      const pause = document.getElementById('pauseBreath');
+      const stop = document.getElementById('stopBreath');
+      const timer = document.getElementById('breathTimer');
+      const phase = document.getElementById('breathPhase');
+      const voiceToggle = document.getElementById('voiceBreath');
+
+      let interval = null;
+      let seq = ['Inhale','Hold','Exhale','Hold'];
+      let counts = [4,4,4,4]; // default counts, adjustable
+      let idx = 0;
+      let sec = counts[0];
+
+      function updateUI(){
+        phase.textContent = seq[idx] + ' ('+sec+'s)';
+        timer.textContent = `${seq[idx]} — ${sec}s`;
+      }
+
+      function step(){
+        if (sec > 0) {
+          if (voiceToggle.checked) speak(seq[idx] + ' ' + sec + ' seconds');
+          updateUI();
+          sec--;
+        } else {
+          idx = (idx + 1) % seq.length;
+          sec = counts[idx];
+          updateUI();
+        }
+      }
+
+      start.addEventListener('click', () => {
+        if (interval) return;
+        idx = 0; sec = counts[0];
+        interval = setInterval(step, 1000);
+        updateUI();
+        start.style.display = 'none'; pause.style.display = ''; stop.style.display = '';
+        pushLog('Started box breathing');
+      });
+      pause.addEventListener('click', () => {
+        if (!interval) return;
+        clearInterval(interval); interval = null;
+        pause.style.display = 'none'; start.style.display = ''; start.textContent = 'Resume';
+        pushLog('Paused box breathing');
+      });
+      stop.addEventListener('click', () => {
+        clearInterval(interval); interval = null;
+        idx = 0; sec = counts[0];
+        timer.textContent = 'Ready'; phase.textContent = '—';
+        start.style.display = ''; pause.style.display = 'none'; stop.style.display = 'none';
+        start.textContent = 'Start';
+        pushLog('Stopped box breathing');
+      });
+    })();
+
+    // --- Grounding 5-4-3-2-1 ---
+    (function(){
+      const start = document.getElementById('startGround');
+      const next = document.getElementById('nextGround');
+      const stop = document.getElementById('stopGround');
+      const timer = document.getElementById('groundTimer');
+      const phase = document.getElementById('groundPhase');
+      const voiceToggle = document.getElementById('voiceGround');
+
+      const steps = [
+        {label: 'See 5 things', hint: 'Look around and name five things you can see.'},
+        {label: 'Touch 4 things', hint: 'Notice textures: your clothing, a chair, a table.'},
+        {label: 'Hear 3 things', hint: 'Listen for sounds near you.'},
+        {label: 'Smell 2 things', hint: 'Find two smells, or take a deep breath.'},
+        {label: 'Taste 1 thing', hint: 'Sip water or notice the taste in your mouth.'}
+      ];
+      let idx = -1;
+
+      function showStep(i){
+        const s = steps[i];
+        phase.textContent = s.label;
+        timer.textContent = s.hint;
+        if (voiceToggle.checked) speak(s.label + '. ' + s.hint);
+      }
+
+      start.addEventListener('click', () => {
+        idx = 0;
+        showStep(idx);
+        start.style.display = 'none'; next.style.display = ''; stop.style.display = '';
+        pushLog('Started grounding 5-4-3-2-1');
+      });
+      next.addEventListener('click', () => {
+        idx++;
+        if (idx >= steps.length) {
+          phase.textContent = 'Completed';
+          timer.textContent = 'Well done.';
+          pushLog('Completed grounding exercise');
+          next.style.display = 'none';
+          return;
+        }
+        showStep(idx);
+      });
+      stop.addEventListener('click', () => {
+        idx = -1;
+        phase.textContent = '—';
+        timer.textContent = 'Ready';
+        start.style.display = ''; next.style.display = 'none'; stop.style.display = 'none';
+        pushLog('Stopped grounding exercise');
+      });
+    })();
+
+    // --- Progressive Muscle Relaxation (short sequence) ---
+    (function(){
+      const start = document.getElementById('startPmr');
+      const pause = document.getElementById('pausePmr');
+      const stop = document.getElementById('stopPmr');
+      const timer = document.getElementById('pmrTimer');
+      const phase = document.getElementById('pmrPhase');
+      const voiceToggle = document.getElementById('voicePmr');
+
+      const sequence = [
+        'Clench your fists', 'Release your hands',
+        'Tighten your shoulders', 'Relax your shoulders',
+        'Tense your stomach', 'Relax your stomach',
+        'Tighten your thighs', 'Relax your thighs',
+        'Tense your calves', 'Relax your calves'
+      ];
+      let idx = 0;
+      let interval = null;
+      let subSec = 5; // tense 5s, release 8s (we'll alternate durations)
+      let phaseState = 'tense'; // or 'release'
+
+      function currentDuration(i){
+        // tense entries (even idx) 5s, release (odd idx) 8s
+        return (i % 2 === 0) ? 5 : 8;
+      }
+
+      function playStep(){
+        if (idx >= sequence.length){ clearInterval(interval); interval = null; phase.textContent = 'Completed'; timer.textContent = 'Done'; start.style.display=''; pause.style.display='none'; stop.style.display='none'; pushLog('Completed PMR'); return; }
+        const txt = sequence[idx];
+        let sec = currentDuration(idx);
+        phase.textContent = txt;
+        timer.textContent = `${txt} — ${sec}s`;
+        if (voiceToggle.checked) speak(txt);
+        // countdown
+        const countdown = setInterval(()=>{
+          sec--;
+          timer.textContent = `${txt} — ${sec}s`;
+          if (sec <= 0){
+            clearInterval(countdown);
+            idx++;
+            if (idx < sequence.length) {
+              // proceed to next step after short pause
+              setTimeout(playStep, 600);
+            } else {
+              clearInterval(interval); interval = null;
+              phase.textContent = 'Completed'; timer.textContent = 'Done';
+              start.style.display=''; pause.style.display='none'; stop.style.display='none';
+              pushLog('Completed PMR');
+            }
+          }
+        },1000);
+      }
+
+      start.addEventListener('click', () => {
+        if (interval) return;
+        idx = 0;
+        start.style.display='none'; pause.style.display=''; stop.style.display='';
+        pushLog('Started PMR');
+        // start the sequence
+        playStep();
+      });
+
+      pause.addEventListener('click', () => {
+        // simple approach: stop current flow (user can resume from start)
+        if (window.speechSynthesis) window.speechSynthesis.cancel();
+        start.style.display=''; pause.style.display='none'; stop.style.display='';
+        pushLog('Paused PMR');
+      });
+
+      stop.addEventListener('click', () => {
+        if (window.speechSynthesis) window.speechSynthesis.cancel();
+        idx = 0;
+        phase.textContent = '—'; timer.textContent = 'Ready';
+        start.style.display=''; pause.style.display='none'; stop.style.display='none';
+        pushLog('Stopped PMR');
+      });
+    })();
+
+    // Accessibility: stop any speech when navigating away
+    window.addEventListener('beforeunload', () => { if (window.speechSynthesis) window.speechSynthesis.cancel(); });
+
+    (function(){
+      const KEY = 'mh_crisis_hidden_until';
+      const el = document.querySelector('.crisis-footer');
+      if (!el) return;
+      const close = document.getElementById('crisisClose');
+      const hiddenUntil = Number(localStorage.getItem(KEY) || 0);
+      if (hiddenUntil > Date.now()) el.style.display = 'none';
+      close.addEventListener('click', () => {
+        el.style.display = 'none';
+        localStorage.setItem(KEY, String(Date.now() + 24*60*60*1000));
+      });
+    })();
+  </script>
+</body>
+</html>

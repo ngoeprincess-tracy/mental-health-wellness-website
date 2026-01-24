@@ -1,0 +1,185 @@
+// ...existing code...
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Chat - Mental Health Support</title>
+  <style>
+    :root{--bg:#f6f8fb;--card:#fff;--accent:#5b9bd5;--muted:#6b7280}
+    body{font-family:Inter,Segoe UI,Roboto,Arial; margin:0;background:var(--bg);color:#111}
+    .container{max-width:720px;margin:28px auto;padding:16px}
+    header{display:flex;justify-content:space-between;align-items:center}
+    h1{font-size:1.1rem;margin:0}
+    .card{background:var(--card);border-radius:12px;padding:14px;box-shadow:0 6px 18px rgba(13,38,76,0.06);margin-top:12px}
+    .chat-window{height:420px;overflow:auto;padding:12px;border-radius:8px;background:#f9fbff;border:1px solid #eef4fb}
+    .msg{margin-bottom:12px;display:flex;gap:10px;align-items:flex-start}
+    .msg.user{justify-content:flex-end}
+    .bubble{max-width:75%;padding:10px 12px;border-radius:12px;background:#fff;border:1px solid #e6eefc}
+    .bubble.bot{background:#eef4fb;color:#042a57}
+    .bubble.user{background:var(--accent);color:#fff;border:none}
+    .controls{display:flex;gap:8px;margin-top:10px}
+    input[type="text"]{flex:1;padding:10px;border-radius:10px;border:1px solid #dbe7fb}
+    button{padding:10px 12px;border-radius:10px;border:0;background:var(--accent);color:#fff;cursor:pointer}
+    .quick{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+    .quick button{background:#fff;border:1px solid #e6eefc;color:var(--accent);padding:8px 10px;border-radius:8px;cursor:pointer}
+    .muted{color:var(--muted);font-size:0.9rem;margin-top:8px}
+    .danger{background:#fff3f3;border:1px solid #ffd6d6;color:#7a1b1b;padding:10px;border-radius:10px;margin-top:10px}
+    footer{margin-top:10px;text-align:center;color:var(--muted);font-size:0.9rem}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>Support Chat</h1>
+        <div class="muted">This chat provides supportive, pre-written responses. Not a replacement for professional care.</div>
+      </div>
+      <div><button id="btnClear" title="Clear chat">Clear</button></div>
+    </header>
+
+    <div class="card" role="main" aria-live="polite">
+      <div id="chatWindow" class="chat-window" aria-label="Conversation"></div>
+
+      <div class="quick" id="quickReplies" aria-hidden="false">
+        <!-- suggested starter replies -->
+        <button data-text="I'm feeling anxious">I'm feeling anxious</button>
+        <button data-text="I'm stressed at work">I'm stressed</button>
+        <button data-text="I feel sad">I feel sad</button>
+        <button data-text="I can't sleep">I can't sleep</button>
+        <button data-text="I want to talk to someone">I want to talk to someone</button>
+      </div>
+
+      <div class="controls" role="group" aria-label="Send message">
+        <input id="inputMsg" type="text" placeholder="Type a message or pick a quick reply…" />
+        <button id="btnSend">Send</button>
+      </div>
+
+      <div id="crisisBox" class="danger" style="display:none" role="alert">
+        If you are in immediate danger or thinking about harming yourself, please contact local emergency services right now.
+        If you're in the United States you can dial or text <strong>988</strong> for the Suicide & Crisis Lifeline. For other locations, please contact your local emergency number or crisis line.
+      </div>
+    </div>
+
+    <footer>
+      Messages are stored locally on this device only.
+    </footer>
+  </div>
+
+  <script>
+    // simple keyword-based responder with supportive canned replies
+    const canned = [
+      {keys: ['hello','hi','hey'], resp: "Hi — I'm here to listen. What's on your mind today?" },
+      {keys: ['anxious','anxiety','panic'], resp: "I'm sorry you're feeling anxious. Try a few slow breaths: inhale for 4, hold 4, exhale 6. Would you like tips to ground yourself?" },
+      {keys: ['stress','stressed','overwhelmed','pressure'], resp: "Stress can feel heavy. Can you tell me one thing causing stress right now? We can try a small step to make it easier." },
+      {keys: ['sad','depressed','down','lonely'], resp: "I'm sorry you're feeling sad. It's okay to feel this way. If you'd like, I can suggest small activities that sometimes help, or ways to reach out to someone you trust." },
+      {keys: ['sleep','insomnia','tired','cant sleep','cannot sleep'], resp: "Trouble sleeping is common. Have you tried a short wind-down routine—no screens for 30 min, dim lights, slow breathing? I can walk you through one." },
+      {keys: ['talk to someone','talk','help me talk','speak'], resp: "If you want to talk to a person, consider contacting a trusted friend, family member, or a mental health professional. I can also help you find next steps." },
+      {keys: ['thank','thanks','thank you'], resp: "You're welcome. I'm here if you want to share more." }
+    ];
+
+    // crisis keywords
+    const crisisKeywords = ['suicid','kill myself','end my life','hurt myself','want to die','cant go on','i will die'];
+
+    const chatWindow = document.getElementById('chatWindow');
+    const input = document.getElementById('inputMsg');
+    const btnSend = document.getElementById('btnSend');
+    const quick = document.getElementById('quickReplies');
+    const crisisBox = document.getElementById('crisisBox');
+    const btnClear = document.getElementById('btnClear');
+
+    // load stored messages
+    const STORAGE_KEY = 'mh_chat_messages';
+    function loadMessages(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return [];
+        return JSON.parse(raw);
+      }catch(e){ return []; }
+    }
+    function saveMessages(arr){ localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); }
+
+    function renderMessage(item){
+      const el = document.createElement('div');
+      el.className = 'msg ' + (item.from === 'user' ? 'user' : 'bot');
+      const b = document.createElement('div');
+      b.className = 'bubble ' + (item.from === 'user' ? 'user' : 'bot');
+      b.textContent = item.text;
+      el.appendChild(b);
+      chatWindow.appendChild(el);
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    function appendAndStore(msg){
+      const arr = loadMessages();
+      arr.push(msg);
+      saveMessages(arr);
+      renderMessage(msg);
+    }
+
+    // simple responder
+    function generateResponse(text){
+      const lc = text.toLowerCase();
+      // crisis check
+      for (const k of crisisKeywords){
+        if (lc.includes(k)){
+          crisisBox.style.display = 'block';
+          return "I'm really sorry you're feeling this way. If you are in immediate danger, please call emergency services now. If you can, consider reaching out to a trusted person or a local crisis line. Would you like resources in your area or to talk about what's led you here?";
+        }
+      }
+      // canned mapping
+      for (const item of canned){
+        for (const k of item.keys){
+          if (lc.includes(k)) return item.resp;
+        }
+      }
+      // fallback: ask to clarify and offer options
+      return "Thanks for sharing. Can you tell me a bit more, or choose one of the quick options below so I can better help?";
+    }
+
+    // send flow
+    function sendUserMessage(text){
+      if (!text || !text.trim()) return;
+      const userMsg = {from:'user', text: text.trim(), ts: Date.now()};
+      appendAndStore(userMsg);
+      input.value = '';
+      // bot responds
+      setTimeout(() => {
+        const respText = generateResponse(text);
+        const botMsg = {from:'bot', text: respText, ts: Date.now()};
+        appendAndStore(botMsg);
+      }, 450);
+    }
+
+    // wire controls
+    btnSend.addEventListener('click', () => sendUserMessage(input.value));
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendUserMessage(input.value); });
+
+    quick.addEventListener('click', (e) => {
+      const b = e.target.closest('button');
+      if (!b) return;
+      const t = b.dataset.text || b.textContent;
+      sendUserMessage(t);
+    });
+
+    btnClear.addEventListener('click', () => {
+      if (!confirm('Clear conversation?')) return;
+      localStorage.removeItem(STORAGE_KEY);
+      chatWindow.innerHTML = '';
+      crisisBox.style.display = 'none';
+    });
+
+    // initial render
+    (function init(){
+      const msgs = loadMessages();
+      if (msgs && msgs.length) msgs.forEach(renderMessage);
+      else {
+        // starter bot greeting
+        const greet = {from:'bot', text: "Hi — I'm here to provide supportive responses. How are you feeling right now?", ts: Date.now()};
+        appendAndStore(greet);
+      }
+    })();
+  </script>
+</body>
+</html>
+// ...existing code...

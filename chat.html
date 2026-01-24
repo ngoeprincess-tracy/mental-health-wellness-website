@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Document Title</title>
+  <style>
+    /* ...existing styles... */
+
+    /* Crisis support footer */
+    .crisis-footer{
+      position:fixed;
+      left:16px; right:16px; bottom:16px;
+      background:linear-gradient(90deg,#fff6f6,#fff);
+      border:1px solid #ffd6d6;
+      color:#5b1b1b;
+      padding:12px 14px;
+      border-radius:10px;
+      box-shadow:0 6px 18px rgba(200,80,80,0.08);
+      display:flex;
+      gap:12px;
+      align-items:center;
+      z-index:9999;
+      font-size:0.95rem;
+    }
+    .crisis-footer a{ color:#7a1b1b; font-weight:600; text-decoration:underline; }
+    .crisis-close{ margin-left:auto; background:transparent; border:0; font-size:18px; line-height:1; cursor:pointer; color:#7a1b1b; }
+    @media (max-width:520px){ .crisis-footer{left:10px;right:10px;bottom:10px;font-size:0.9rem} }
+  </style>
+</head>
+<body>
+  <!-- ...existing content... -->
+
+  <!-- Crisis support footer -->
+  <div class="crisis-footer" role="contentinfo" aria-live="polite">
+    <div>
+      If you are in immediate danger or thinking about harming yourself, call local emergency services now.
+      In the U.S. dial or text <strong>988</strong>. For other countries see
+      <a href="https://www.opencounseling.com/suicide-hotlines" target="_blank" rel="noopener">international crisis lines</a>.
+    </div>
+    <button id="crisisClose" class="crisis-close" aria-label="Dismiss crisis support">✕</button>
+  </div>
+
+  <script>
+    // ...existing chat script...
+
+    (function(){
+      const KEY = 'mh_crisis_hidden_until';
+      const el = document.querySelector('.crisis-footer');
+      if (!el) return;
+      const close = document.getElementById('crisisClose');
+      const hiddenUntil = Number(localStorage.getItem(KEY) || 0);
+      if (hiddenUntil > Date.now()) el.style.display = 'none';
+      close.addEventListener('click', () => {
+        el.style.display = 'none';
+        localStorage.setItem(KEY, String(Date.now() + 24*60*60*1000));
+      });
+    })();
+  </script>
+</body>
+</html>
