@@ -52,6 +52,20 @@
 </head>
 <body>
   <div class="container">
+    <!-- Site header / global nav -->
+    <header style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+      <div>
+        <a href="index.html" style="text-decoration:none;color:inherit"><strong>Mental Health Wellness</strong></a>
+        <div style="color:var(--muted);font-size:0.9rem">Tools & resources</div>
+      </div>
+      <nav aria-label="Primary">
+        <a class="btn secondary" href="dashboard.html">Dashboard</a>
+        <a class="btn secondary" href="chat.html">Chat</a>
+        <a class="btn secondary" href="exercises.html">Exercises</a>
+        <a class="btn ghost" href="articles.html">Articles</a>
+      </nav>
+    </header>
+
     <header>
       <div>
         <h1>Mental Health Dashboard</h1>
@@ -124,16 +138,16 @@
     </div>
   </div>
 
-  <!-- Crisis support footer -->
+  <!-- Crisis support footer (persistent across pages) -->
   <div class="crisis-footer" role="contentinfo" aria-live="polite">
     <div>
       If you are in immediate danger or thinking about harming yourself, call local emergency services now.
-      In the U.S. dial or text <strong>988</strong>. For other countries see
-      <a href="https://www.opencounseling.com/suicide-hotlines" target="_blank" rel="noopener">international crisis lines</a>.
+      In Cameroon dial <strong>119</strong>.
     </div>
     <button id="crisisClose" class="crisis-close" aria-label="Dismiss crisis support">✕</button>
   </div>
 
+  <script src="motiv.js" defer></script>
   <script>
     // Utils
     const todayKey = (() => {
@@ -248,6 +262,6 @@
         localStorage.setItem(KEY, String(Date.now() + 24*60*60*1000));
       });
     })();
-  </script>
-</body>
-</html>
+   </script>
+ </body>
+ </html>

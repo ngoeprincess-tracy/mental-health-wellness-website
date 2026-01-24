@@ -1,4 +1,3 @@
-// ...existing code...
 <!doctype html>
 <html lang="en">
 <head>
@@ -7,6 +6,18 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
 </head>
 <body>
+  <div style="max-width:980px;margin:18px auto;padding:14px">
+    <header style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div><a href="index.html" style="text-decoration:none;color:inherit"><strong>Mental Health Wellness</strong></a></div>
+      <nav aria-label="Primary">
+        <a class="ghost" href="dashboard.html">Dashboard</a>
+        <a class="ghost" href="chat.html">Chat</a>
+        <a class="ghost" href="exercises.html">Exercises</a>
+        <a class="ghost" href="articles.html">Articles</a>
+      </nav>
+    </header>
+  </div>
+
   <!-- This file exposes a minimal Firebase helper on window.firebaseApi
        Replace the config values below with your Firebase project config
        and call firebaseApi.init() before using save/load functions. -->
@@ -14,6 +25,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
+  <script src="motiv.js" defer></script>
   <script>
     // Replace with your Firebase config (found in Firebase console)
     const DEFAULT_CONFIG = {
@@ -90,7 +102,7 @@
 
       // optional: sign out
       async signOut() {
-        if (this.auth) await this.auth.signOut();
+        if this.auth) await this.auth.signOut();
         this.initialized = false;
         this.uid = null;
       }
@@ -99,6 +111,26 @@
     // Example (uncomment to auto-init on page load; recommended: init from your dashboard code)
     // (async () => { await window.firebaseApi.init(); console.log('Firebase ready'); })();
   </script>
+
+  <!-- Crisis support footer -->
+  <div class="crisis-footer" role="contentinfo" aria-live="polite"></div>
+  <script>
+    (function(){
+      const KEY = 'mh_crisis_hidden_until';
+      const el = document.querySelector('.crisis-footer');
+      if (!el) return;
+      const close = document.createElement('button');
+      close.className = 'crisis-close';
+      close.textContent = '✕';
+      close.addEventListener('click', () => {
+        el.style.display = 'none';
+        localStorage.setItem(KEY, String(Date.now() + 24*60*60*1000));
+      });
+      el.appendChild(document.createElement('div')).innerHTML = 'If you are in immediate danger or thinking about harming yourself, call local emergency services now. In Cameroon dial <strong>119</strong>.';
+      el.appendChild(close);
+      const hiddenUntil = Number(localStorage.getItem(KEY) || 0);
+      if (hiddenUntil > Date.now()) el.style.display = 'none';
+    })();
+  </script>
 </body>
 </html>
-// ...existing code...

@@ -51,6 +51,20 @@
 </head>
 <body>
   <div class="container">
+    <!-- Site header / global nav -->
+    <header style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px">
+      <div>
+        <a href="index.html" style="text-decoration:none;color:inherit"><strong>Mental Health Wellness</strong></a>
+        <div class="meta" style="color:var(--muted)">Articles & tips</div>
+      </div>
+      <nav aria-label="Primary">
+        <a class="ghost" href="dashboard.html">Dashboard</a>
+        <a class="ghost" href="chat.html">Chat</a>
+        <a class="ghost" href="exercises.html">Exercises</a>
+        <a class="ghost" href="articles.html">Articles</a>
+      </nav>
+    </header>
+
     <header>
       <div>
         <h1>Articles & Tips</h1>
@@ -85,14 +99,9 @@
 
   <!-- Crisis support footer -->
   <div class="crisis-footer" role="contentinfo" aria-live="polite">
-    <div>
-      If you are in immediate danger or thinking about harming yourself, call local emergency services now.
-      In the U.S. dial or text <strong>988</strong>. For other countries see
-      <a href="https://www.opencounseling.com/suicide-hotlines" target="_blank" rel="noopener">international crisis lines</a>.
-    </div>
-    <button id="crisisClose" class="crisis-close" aria-label="Dismiss crisis support">✕</button>
   </div>
 
+  <script src="motiv.js" defer></script>
   <script>
     // sample articles — replace with your content or load from server
     const ARTICLES = [
