@@ -102,7 +102,7 @@
 
       // optional: sign out
       async signOut() {
-        if this.auth) await this.auth.signOut();
+        if(this.auth) await this.auth.signOut();
         this.initialized = false;
         this.uid = null;
       }
